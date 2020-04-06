@@ -1,14 +1,17 @@
 #include <Uniot.h>
-#include <Board-WittyCloud.h>
 #include <CBOR.h>
 #include <AppKit.h>
 #include <Storage.h>
 #include <LispPrimitives.h>
 #include <Logger.h>
 
+// replace with your configuration
+#include <Board-WittyCloud.h>
+
 using namespace uniot;
 
-AppKit MainAppKit(MyCredentials, PIN_BUTTON, LOW, RED);
+// You must have one button and one LED to interact with the device, specify the parameters here
+AppKit MainAppKit(MyCredentials, PIN_BUTTON, BTN_PIN_LEVEL, RED);
 
 auto taskPrintHeap = TaskScheduler::make([&](short t) {
   Serial.println(ESP.getFreeHeap());
@@ -16,10 +19,10 @@ auto taskPrintHeap = TaskScheduler::make([&](short t) {
 
 void inject()
 {
-  pinMode(RED, OUTPUT);
-  pinMode(GREEN, OUTPUT);
-  pinMode(BLUE, OUTPUT);
-  pinMode(LDR, INPUT);
+  UniotPinMap.setDigitalOutput(3, RED, GREEN, BLUE);
+  UniotPinMap.setDigitalInput(3, RED, GREEN, BLUE);
+  UniotPinMap.setAnalogOutput(3, RED, GREEN, BLUE);
+  UniotPinMap.setAnalogInput(1, LDR);
 
   MainBroker.connect(&MainAppKit);
   MainScheduler.push(&MainAppKit)
